@@ -4,6 +4,8 @@ help() {
     echo "Usage: usbpermission [options]"
     echo "Options:"
     echo "  -u | --usb <port>           Specify connection port. (numberic value)"
+    echo "  --show                      List all available usb ports."
+    echo " "
 }
 
 is_number() {
@@ -17,13 +19,16 @@ is_number() {
 run_code() {
     usb_port="/dev/ttyUSB$1"
     if [ -e "$usb_port" ]; then
-        echo "Run script $usb_port"
+        sudo chmod a+rw "$usb_port"
         echo "Usb port ($usb_port) was open successfully."
     else
         echo "Error: Usb port ($usb_port) does not exist!"
     fi
 }
 
+list_all_usb() {
+    ls /dev/ttyUSB*
+}
 
 if [ $# -eq 0 ]; then
     help
@@ -45,6 +50,14 @@ else
                     exit 1
                 fi 
             ;;
+            --show)
+               list_all_usb 
+               shift 1
+                ;;
+            --help)
+                help
+                shift 1
+                ;;
             *)
                 echo "Error: Unknown argument: $1"
                 exit 1
@@ -54,7 +67,3 @@ else
 fi
 
 
-
-
-
-#sudo chmod a+rw /dev/ttyUSB0
