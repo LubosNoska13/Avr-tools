@@ -1,0 +1,60 @@
+#!/bin/bash
+
+help() {
+    echo "Usage: usbpermission [options]"
+    echo "Options:"
+    echo "  -u | --usb <port>           Specify connection port. (numberic value)"
+}
+
+is_number() {
+    if [[ $1 =~ ^[0-9]+$ ]]; then 
+        return 0
+    else
+        return 1
+    fi
+}
+
+run_code() {
+    usb_port="/dev/ttyUSB$1"
+    if [ -e "$usb_port" ]; then
+        echo "Run script $usb_port"
+        echo "Usb port ($usb_port) was open successfully."
+    else
+        echo "Error: Usb port ($usb_port) does not exist!"
+    fi
+}
+
+
+if [ $# -eq 0 ]; then
+    help
+else
+    while [[ $# -gt 0 ]]; do 
+        case "$1" in 
+            --usb|-u)
+                if [[ $# -gt 1 ]]; then 
+                    if is_number "$2"; then
+                        value_option="$2"
+                        run_code "$2"
+                        shift 2
+                    else
+                        echo "Error: Value ($2) is not number!"
+                        exit 1
+                    fi
+                else
+                    echo "Error: Missing numeric value for --usb option!"
+                    exit 1
+                fi 
+            ;;
+            *)
+                echo "Error: Unknown argument: $1"
+                exit 1
+            ;;
+        esac
+    done
+fi
+
+
+
+
+
+#sudo chmod a+rw /dev/ttyUSB0
